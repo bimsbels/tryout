@@ -292,29 +292,32 @@ Profile
         });
         @endif
         @endif
-
         // PROVINSI
         $('#provinsi').select2({
             theme: 'bootstrap4',
             minimumInputLength: 3,
+            placeholder: 'Pilih Provinsi',
             ajax: {
                 url: 'https://wilayah.id/api/provinces.json',
                 type: "GET",
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    let searchTerm = $('#provinsi').data('select2').$search.val().toLowerCase();
-
+                    if (!response || !response.data) {
+                        return { results: [] };
+                    }
+                    let searchTerm = $('.select2-search__field').val() ? $('.select2-search__field').val().toLowerCase() : '';
                     let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
-
                     let results = filtered.map(item => ({
                         id: item.code,
                         text: item.name
                     }));
-
                     return { results: results };
                 },
-                cache: true
+                cache: true,
+                error: function (xhr, status, error) {
+                    console.error("Gagal memuat data provinsi:", error);
+                }
             }
         });
 
@@ -322,27 +325,34 @@ Profile
         $('#kabupaten').select2({
             theme: 'bootstrap4',
             minimumInputLength: 1,
+            placeholder: 'Pilih Kabupaten/Kota',
             ajax: {
                 url: function () {
                     let provCode = $('#provinsi').val();
+                    if (!provCode) {
+                        return null;
+                    }
                     return `https://wilayah.id/api/regencies/${provCode}.json`;
                 },
                 type: "GET",
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    let searchTerm = $('#kabupaten').data('select2').$search.val().toLowerCase();
-
+                    if (!response || !response.data) {
+                        return { results: [] };
+                    }
+                    let searchTerm = $('.select2-search__field').val() ? $('.select2-search__field').val().toLowerCase() : '';
                     let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
-
                     let results = filtered.map(item => ({
                         id: item.code,
                         text: item.name
                     }));
-
                     return { results: results };
                 },
-                cache: true
+                cache: true,
+                error: function (xhr, status, error) {
+                    console.error("Gagal memuat data kabupaten/kota:", error);
+                }
             }
         });
 
@@ -350,28 +360,46 @@ Profile
         $('#kecamatan').select2({
             theme: 'bootstrap4',
             minimumInputLength: 1,
+            placeholder: 'Pilih Kecamatan',
             ajax: {
                 url: function () {
                     let regencyCode = $('#kabupaten').val();
+                    if (!regencyCode) {
+                        return null;
+                    }
                     return `https://wilayah.id/api/districts/${regencyCode}.json`;
                 },
                 type: "GET",
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    let searchTerm = $('#kecamatan').data('select2').$search.val().toLowerCase();
-
+                    if (!response || !response.data) {
+                        return { results: [] };
+                    }
+                    let searchTerm = $('.select2-search__field').val() ? $('.select2-search__field').val().toLowerCase() : '';
                     let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
-
                     let results = filtered.map(item => ({
                         id: item.code,
                         text: item.name
                     }));
-
                     return { results: results };
                 },
-                cache: true
+                cache: true,
+                error: function (xhr, status, error) {
+                    console.error("Gagal memuat data kecamatan:", error);
+                }
             }
+        });
+
+        // Reset kabupaten dan kecamatan saat provinsi berubah
+        $('#provinsi').on('change', function () {
+            $('#kabupaten').val(null).trigger('change');
+            $('#kecamatan').val(null).trigger('change');
+        });
+
+        // Reset kecamatan saat kabupaten berubah
+        $('#kabupaten').on('change', function () {
+            $('#kecamatan').val(null).trigger('change');
         });
 
         $('#formPeserta').on('submit', function(e) {
