@@ -239,94 +239,93 @@ Profile
         });
 
         @if ($user->usersDetail != NULL)
-            @if ($user->usersDetail->provinsi != NULL && $user->usersDetail->kabupaten != NULL && $user->usersDetail->kecamatan != NULL)
+        @if ($user->usersDetail->provinsi != NULL && $user->usersDetail->kabupaten != NULL && $user->usersDetail->kecamatan != NULL)
 
-            $.ajax({ // make the request for the selected data object
-                type: 'GET',
-                url: 'https://api.cahyadsn.com/province/' + '{{ $user->usersDetail->provinsi }}',
-                dataType: 'json'
-                }).then(function (res) {
-                    // Here we should have the data object
-                    $('#provinsi').append(`<option value="${res.data.kode}" selected="selected">${res.data.nama}</option>`);
-            });
+        // Ambil data provinsi
+        $.ajax({
+            type: 'GET',
+            url: 'https://wilayah.id/api/provinces.json',
+            dataType: 'json'
+        }).then(function (res) {
+            const provinsi = res.data.find(item => item.code === '{{ $user->usersDetail->provinsi }}');
+            if (provinsi) {
+                $('#provinsi').append(`<option value="${provinsi.code}" selected="selected">${provinsi.name}</option>`);
+            }
+        });
 
-            $.ajax({ // make the request for the selected data object
-                type: 'GET',
-                url: 'https://api.cahyadsn.com/regency/' + '{{ $user->usersDetail->kabupaten }}',
-                dataType: 'json'
-                }).then(function (res) {
-                    // Here we should have the data object
-                    $('#kabupaten').append(`<option value="${res.data.kode}" selected="selected">${res.data.nama}</option>`);
-            });
+        // Ambil data kabupaten/kota
+        $.ajax({
+            type: 'GET',
+            url: 'https://wilayah.id/api/regencies/{{ $user->usersDetail->provinsi }}.json',
+            dataType: 'json'
+        }).then(function (res) {
+            const kabupaten = res.data.find(item => item.code === '{{ $user->usersDetail->kabupaten }}');
+            if (kabupaten) {
+                $('#kabupaten').append(`<option value="${kabupaten.code}" selected="selected">${kabupaten.name}</option>`);
+            }
+        });
 
-            $.ajax({ // make the request for the selected data object
-                type: 'GET',
-                url: 'https://api.cahyadsn.com/district/' + '{{ $user->usersDetail->kecamatan }}',
-                dataType: 'json'
-                }).then(function (res) {
-                    // Here we should have the data object
-                    $('#kecamatan').append(`<option value="${res.data.kode}" selected="selected">${res.data.nama}</option>`);
-            });
-            @endif
-            @if ($user->usersDetail->penempatan != NULL)
-                $.ajax({ // make the request for the selected data object
-                    type: 'GET',
-                    url: 'https://api.cahyadsn.com/province/' + '{{ $user->usersDetail->penempatan }}',
-                    dataType: 'json'
-                    }).then(function (res) {
-                        // Here we should have the data object
-                        $('#formasi').append(`<option value="${res.data.kode}" selected="selected">${res.data.nama}</option>`);
-                });
-            @endif
+        // Ambil data kecamatan
+        $.ajax({
+            type: 'GET',
+            url: 'https://wilayah.id/api/districts/{{ $user->usersDetail->kabupaten }}.json',
+            dataType: 'json'
+        }).then(function (res) {
+            const kecamatan = res.data.find(item => item.code === '{{ $user->usersDetail->kecamatan }}');
+            if (kecamatan) {
+                $('#kecamatan').append(`<option value="${kecamatan.code}" selected="selected">${kecamatan.name}</option>`);
+            }
+        });
+
+        @endif
+        @if ($user->usersDetail->penempatan != NULL)
+        // Ambil data provinsi untuk penempatan
+        $.ajax({
+            type: 'GET',
+            url: 'https://wilayah.id/api/provinces.json',
+            dataType: 'json'
+        }).then(function (res) {
+            const penempatan = res.data.find(item => item.code === '{{ $user->usersDetail->penempatan }}');
+            if (penempatan) {
+                $('#formasi').append(`<option value="${penempatan.code}" selected="selected">${penempatan.name}</option>`);
+            }
+        });
+        @endif
         @endif
 
+        // PROVINSI
         $('#provinsi').select2({
             theme: 'bootstrap4',
             minimumInputLength: 3,
             ajax: {
-                url: function (params) {
-                    return 'https://api.cahyadsn.com/search/' + params.term;
-                },
-                cache: false,
-                type: "get",
+                url: 'https://wilayah.id/api/provinces.json',
+                type: "GET",
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    let res = [];
-                    if (response.data != 'Data not found') {
-                        res = response.data.map(item => {
-                            return {
-                                id: item.kode,
-                                text: item.nama
-                            };
-                        });
+                    let res = response.data.map(item => {
+                        return {
+                            id: item.code,
+                            text: item.name
+                        };
+                    });
 
-                        res = res.filter(function (item) {
-                            return item.id.length == 2
-                        });
-                    }
-                    return {
-                        results: res
-                    };
+                    return { results: res };
                 },
                 cache: true
             }
         });
 
+        // Mengisi daftar provinsi secara langsung (opsional)
         $.ajax({
-            url: 'https://api.cahyadsn.com/provinces',
-            type: 'get',
+            url: 'https://wilayah.id/api/provinces.json',
+            type: 'GET',
             dataType: 'json',
-            success: function (response){
-                let res = [];
-                if (response.data != 'Data not found') {
-                    res = response.data.map(item => {
-                        return {
-                            id: item.kode,
-                            text: item.nama
-                        };
-                    });
-                }
+            success: function (response) {
+                let res = response.data.map(item => {
+                    return { id: item.code, text: item.name };
+                });
+
                 res.forEach(item => {
                     let newOption = new Option(item.text, item.id, false, false);
                     $('#formasi').append(newOption).trigger('change');
@@ -334,76 +333,64 @@ Profile
             }
         });
 
-        $('#provinsi').on("select2:selecting", function(e) {
-            $('#kabupaten').append('<option value="" selected="selected">-- Cari kabupaten/kota --</option>');
-            $('#kecamatan').append('<option value="" selected="selected">-- Cari kecamatan --</option>');
+        // Reset kabupaten & kecamatan saat provinsi berubah
+        $('#provinsi').on("select2:select", function(e) {
+            $('#kabupaten').empty().append('<option value="" selected>-- Cari kabupaten/kota --</option>').trigger('change');
+            $('#kecamatan').empty().append('<option value="" selected>-- Cari kecamatan --</option>').trigger('change');
         });
 
-        $('#kabupaten').on("select2:selecting", function(e) {
-            $('#kecamatan').append('<option value="" selected="selected">-- Cari kecamatan --</option>');
-        });
-
+        // KABUPATEN/KOTA
         $('#kabupaten').select2({
             theme: 'bootstrap4',
             minimumInputLength: 1,
             ajax: {
-                url: function (params) {
-                    return 'https://api.cahyadsn.com/search/' + params.term;
+                url: function () {
+                    let provCode = $('#provinsi').val();
+                    return `https://wilayah.id/api/regencies/${provCode}.json`;
                 },
-                cache: false,
-                type: "get",
+                type: "GET",
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    let res = [];
-                    if (response.data != 'Data not found' && $('#provinsi').val()) {
-                        res = response.data.map(item => {
-                            return {
-                                id: item.kode,
-                                text: item.nama
-                            };
-                        });
+                    let res = response.data.map(item => {
+                        return {
+                            id: item.code,
+                            text: item.name
+                        };
+                    });
 
-                        res = res.filter(function (item) {
-                            return item.id.length == 5 && item.id.substring(0,2) == $('#provinsi').val();
-                        });
-                    }
-                    return {
-                        results: res
-                    };
+                    return { results: res };
                 },
                 cache: true
             }
         });
 
+        // Reset kecamatan saat kabupaten/kota berubah
+        $('#kabupaten').on("select2:select", function(e) {
+            $('#kecamatan').empty().append('<option value="" selected>-- Cari kecamatan --</option>').trigger('change');
+        });
+
+        // KECAMATAN
         $('#kecamatan').select2({
             theme: 'bootstrap4',
             minimumInputLength: 1,
             ajax: {
-                url: function (params) {
-                    return 'https://api.cahyadsn.com/search/' + params.term;
+                url: function () {
+                    let regencyCode = $('#kabupaten').val();
+                    return `https://wilayah.id/api/districts/${regencyCode}.json`;
                 },
-                cache: false,
-                type: "get",
+                type: "GET",
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    let res = [];
-                    if (response.data != 'Data not found' && $('#provinsi').val() && $('#kabupaten').val()) {
-                        res = response.data.map(item => {
-                            return {
-                                id: item.kode,
-                                text: item.nama
-                            };
-                        });
+                    let res = response.data.map(item => {
+                        return {
+                            id: item.code,
+                            text: item.name
+                        };
+                    });
 
-                        res = res.filter(function (item) {
-                            return item.id.length == 8 && item.id.substring(0,2) == $('#provinsi').val() && item.id.substring(0,5) == $('#kabupaten').val();
-                        });
-                    }
-                    return {
-                        results: res
-                    };
+                    return { results: res };
                 },
                 cache: true
             }

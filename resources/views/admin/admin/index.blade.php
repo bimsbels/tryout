@@ -265,7 +265,7 @@ Data Admin
 
     async function getDistrict(id) {
         return $.ajax({
-            url: 'https://api.cahyadsn.com/district/' + id,
+            url: `https://wilayah.id/api/districts/${id}.json`,
             type: 'GET',
             dataType: 'json'
         });
@@ -273,15 +273,15 @@ Data Admin
 
     async function getRegency(id) {
         return $.ajax({
-            url: 'https://api.cahyadsn.com/regency/' + id,
+            url: `https://wilayah.id/api/regencies/${id}.json`,
             type: 'GET',
             dataType: 'json'
         });
     }
 
-    async function getProvince(id) {
+    async function getProvince() {
         return $.ajax({
-            url: 'https://api.cahyadsn.com/province/' + id,
+            url: 'https://wilayah.id/api/provinces.json',
             type: 'GET',
             dataType: 'json'
         });
@@ -292,33 +292,37 @@ Data Admin
             .done(async (response) => {
                 $('#modal-detail').modal('show');
                 $('#modal-detail .modal-title').text(response.name);
-                $('#modal-detail .text').text("");
                 $('#modal-detail [id=idPeserta]').text(response.id);
                 $('#modal-detail [id=nama]').text(response.name);
                 $('#modal-detail [id=email]').text(response.email);
 
-                if(response.users_detail != null) {
+                if (response.users_detail) {
                     $('#modal-detail [id=noHP]').text(response.users_detail.no_hp);
+
                     let alamat = "";
+
                     try {
-                        const result = await getDistrict(response.users_detail.kecamatan)
-                        alamat += result.data.nama + ", ";
+                        const districtResult = await getDistrict(response.users_detail.kecamatan);
+                        const district = districtResult.data.find(d => d.code === response.users_detail.kecamatan);
+                        alamat += district ? district.name + ", " : "";
                     } catch (error) {
-                        console.log(error);
+                        console.error('Error fetching district:', error);
                     }
 
                     try {
-                        const result = await getRegency(response.users_detail.kabupaten)
-                        alamat += result.data.nama + ", ";
+                        const regencyResult = await getRegency(response.users_detail.kabupaten);
+                        const regency = regencyResult.data.find(r => r.code === response.users_detail.kabupaten);
+                        alamat += regency ? regency.name + ", " : "";
                     } catch (error) {
-                        console.log(error);
+                        console.error('Error fetching regency:', error);
                     }
 
                     try {
-                        const result = await getProvince(response.users_detail.provinsi)
-                        alamat += result.data.nama;
+                        const provinceResult = await getProvince();
+                        const province = provinceResult.data.find(p => p.code === response.users_detail.provinsi);
+                        alamat += province ? province.name : "";
                     } catch (error) {
-                        console.log(error);
+                        console.error('Error fetching province:', error);
                     }
 
                     $('#modal-detail [id=alamat]').text(alamat);
@@ -327,16 +331,16 @@ Data Admin
                     $('#modal-detail [id=instagram]').text(response.users_detail.instagram);
                     $('#modal-detail [id=sumber]').text(response.users_detail.sumber_informasi);
                 }
+
                 let textSession = "";
                 response.sessions.forEach(session => {
-                    textSession += `<span class='badge bg-primary'>${session.ip_address} (${session.last_activity})</span>` + "<br>";
+                    textSession += `<span class='badge bg-primary'>${session.ip_address} (${session.last_activity})</span><br>`;
                 });
                 $('#modal-detail [id=login]').html(textSession);
             })
             .fail((errors) => {
                 alert('Tidak dapat menampilkan data.');
-                return;
-            })
+            });
     }
 
     function resetPassword(url) {

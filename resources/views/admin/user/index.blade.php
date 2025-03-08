@@ -235,7 +235,7 @@ Data User
 
     async function getDistrict(id) {
         return $.ajax({
-            url: 'https://api.cahyadsn.com/district/' + id,
+            url: 'https://wilayah.id/api/districts/' + id + '.json',
             type: 'GET',
             dataType: 'json'
         });
@@ -243,7 +243,7 @@ Data User
 
     async function getRegency(id) {
         return $.ajax({
-            url: 'https://api.cahyadsn.com/regency/' + id,
+            url: 'https://wilayah.id/api/regencies/' + id + '.json',
             type: 'GET',
             dataType: 'json'
         });
@@ -251,9 +251,11 @@ Data User
 
     async function getProvince(id) {
         return $.ajax({
-            url: 'https://api.cahyadsn.com/province/' + id,
+            url: 'https://wilayah.id/api/provinces.json',
             type: 'GET',
             dataType: 'json'
+        }).then(data => {
+            return data.data.find(province => province.code === id);
         });
     }
 
@@ -273,30 +275,29 @@ Data User
                     let alamat = "";
                     try {
                         const result = await getDistrict(response.users_detail.kecamatan)
-                        alamat += result.data.nama + ", ";
+                        alamat += result.data.find(d => d.code === response.users_detail.kecamatan)?.name + ", ";
                     } catch (error) {
                         console.log(error);
                     }
 
                     try {
                         const result = await getRegency(response.users_detail.kabupaten)
-                        alamat += result.data.nama + ", ";
+                        alamat += result.data.find(r => r.code === response.users_detail.kabupaten)?.name + ", ";
                     } catch (error) {
                         console.log(error);
                     }
 
                     try {
-                        const result = await getProvince(response.users_detail.provinsi)
-                        alamat += result.data.nama;
+                        const province = await getProvince(response.users_detail.provinsi)
+                        alamat += province?.name || "";
                     } catch (error) {
                         console.log(error);
                     }
 
                     let penempatan = "";
-
                     try {
-                        const result = await getProvince(response.users_detail.penempatan)
-                        penempatan = result.data.nama;
+                        const province = await getProvince(response.users_detail.penempatan)
+                        penempatan = province?.name || "";
                     } catch (error) {
                         console.log(error);
                     }
