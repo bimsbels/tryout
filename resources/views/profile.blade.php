@@ -292,6 +292,7 @@ Profile
         });
         @endif
         @endif
+
         // PROVINSI
         $('#provinsi').select2({
             theme: 'bootstrap4',
@@ -303,15 +304,23 @@ Profile
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
+                    console.log("Response dari API:", response);
                     if (!response || !response.data) {
                         return { results: [] };
                     }
+
                     let searchTerm = $('.select2-search__field').val() ? $('.select2-search__field').val().toLowerCase() : '';
+                    console.log("Search term:", searchTerm);
+
                     let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
+                    console.log("Data setelah difilter:", filtered);
+
                     let results = filtered.map(item => ({
                         id: item.code,
                         text: item.name
                     }));
+                    console.log("Data yang dikembalikan ke Select2:", results);
+
                     return { results: results };
                 },
                 cache: true,
@@ -338,15 +347,23 @@ Profile
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
+                    console.log("Response dari API:", response);
                     if (!response || !response.data) {
                         return { results: [] };
                     }
+
                     let searchTerm = $('.select2-search__field').val() ? $('.select2-search__field').val().toLowerCase() : '';
+                    console.log("Search term:", searchTerm);
+
                     let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
+                    console.log("Data setelah difilter:", filtered);
+
                     let results = filtered.map(item => ({
                         id: item.code,
                         text: item.name
                     }));
+                    console.log("Data yang dikembalikan ke Select2:", results);
+
                     return { results: results };
                 },
                 cache: true,
@@ -373,15 +390,23 @@ Profile
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
+                    console.log("Response dari API:", response);
                     if (!response || !response.data) {
                         return { results: [] };
                     }
+
                     let searchTerm = $('.select2-search__field').val() ? $('.select2-search__field').val().toLowerCase() : '';
+                    console.log("Search term:", searchTerm);
+
                     let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
+                    console.log("Data setelah difilter:", filtered);
+
                     let results = filtered.map(item => ({
                         id: item.code,
                         text: item.name
                     }));
+                    console.log("Data yang dikembalikan ke Select2:", results);
+
                     return { results: results };
                 },
                 cache: true,
