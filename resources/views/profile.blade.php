@@ -304,29 +304,19 @@ Profile
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    console.log("Response dari API:", response);
+                    console.log("Response dari API (Provinsi):", response);
                     if (!response || !response.data) {
                         return { results: [] };
                     }
 
-                    let searchTerm = $('.select2-search__field').val() ? $('.select2-search__field').val().toLowerCase() : '';
-                    console.log("Search term:", searchTerm);
-
-                    let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
-                    console.log("Data setelah difilter:", filtered);
-
-                    let results = filtered.map(item => ({
+                    let results = response.data.map(item => ({
                         id: item.code,
                         text: item.name
                     }));
-                    console.log("Data yang dikembalikan ke Select2:", results);
 
                     return { results: results };
                 },
-                cache: true,
-                error: function (xhr, status, error) {
-                    console.error("Gagal memuat data provinsi:", error);
-                }
+                cache: true
             }
         });
 
@@ -338,38 +328,25 @@ Profile
             ajax: {
                 url: function () {
                     let provCode = $('#provinsi').val();
-                    if (!provCode) {
-                        return null;
-                    }
-                    return `https://wilayah.id/api/regencies/${provCode}.json`;
+                    return provCode ? `https://wilayah.id/api/regencies/${provCode}.json` : null;
                 },
                 type: "GET",
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    console.log("Response dari API:", response);
+                    console.log("Response dari API (Kabupaten):", response);
                     if (!response || !response.data) {
                         return { results: [] };
                     }
 
-                    let searchTerm = $('.select2-search__field').val() ? $('.select2-search__field').val().toLowerCase() : '';
-                    console.log("Search term:", searchTerm);
-
-                    let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
-                    console.log("Data setelah difilter:", filtered);
-
-                    let results = filtered.map(item => ({
+                    let results = response.data.map(item => ({
                         id: item.code,
                         text: item.name
                     }));
-                    console.log("Data yang dikembalikan ke Select2:", results);
 
                     return { results: results };
                 },
-                cache: true,
-                error: function (xhr, status, error) {
-                    console.error("Gagal memuat data kabupaten/kota:", error);
-                }
+                cache: true
             }
         });
 
@@ -381,38 +358,25 @@ Profile
             ajax: {
                 url: function () {
                     let regencyCode = $('#kabupaten').val();
-                    if (!regencyCode) {
-                        return null;
-                    }
-                    return `https://wilayah.id/api/districts/${regencyCode}.json`;
+                    return regencyCode ? `https://wilayah.id/api/districts/${regencyCode}.json` : null;
                 },
                 type: "GET",
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    console.log("Response dari API:", response);
+                    console.log("Response dari API (Kecamatan):", response);
                     if (!response || !response.data) {
                         return { results: [] };
                     }
 
-                    let searchTerm = $('.select2-search__field').val() ? $('.select2-search__field').val().toLowerCase() : '';
-                    console.log("Search term:", searchTerm);
-
-                    let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
-                    console.log("Data setelah difilter:", filtered);
-
-                    let results = filtered.map(item => ({
+                    let results = response.data.map(item => ({
                         id: item.code,
                         text: item.name
                     }));
-                    console.log("Data yang dikembalikan ke Select2:", results);
 
                     return { results: results };
                 },
-                cache: true,
-                error: function (xhr, status, error) {
-                    console.error("Gagal memuat data kecamatan:", error);
-                }
+                cache: true
             }
         });
 
