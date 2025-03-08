@@ -299,33 +299,30 @@ Data Admin
                 if (response.users_detail) {
                     $('#modal-detail [id=noHP]').text(response.users_detail.no_hp);
 
-                    let alamat = "";
+                    let alamat = [];
 
-                    try {
-                        const districtResult = await getDistrict(response.users_detail.kecamatan);
-                        const district = districtResult.data.find(d => d.code === response.users_detail.kecamatan);
-                        alamat += district ? district.name + ", " : "";
-                    } catch (error) {
-                        console.error('Error fetching district:', error);
+                    // Ambil data kecamatan
+                    if (response.users_detail.kecamatan) {
+                        const districts = await getDistrict(response.users_detail.kabupaten);
+                        const district = districts.find(d => d.code === response.users_detail.kecamatan);
+                        if (district) alamat.push(district.name);
                     }
 
-                    try {
-                        const regencyResult = await getRegency(response.users_detail.kabupaten);
-                        const regency = regencyResult.data.find(r => r.code === response.users_detail.kabupaten);
-                        alamat += regency ? regency.name + ", " : "";
-                    } catch (error) {
-                        console.error('Error fetching regency:', error);
+                    // Ambil data kabupaten
+                    if (response.users_detail.kabupaten) {
+                        const regencies = await getRegency(response.users_detail.provinsi);
+                        const regency = regencies.find(r => r.code === response.users_detail.kabupaten);
+                        if (regency) alamat.push(regency.name);
                     }
 
-                    try {
-                        const provinceResult = await getProvince();
-                        const province = provinceResult.data.find(p => p.code === response.users_detail.provinsi);
-                        alamat += province ? province.name : "";
-                    } catch (error) {
-                        console.error('Error fetching province:', error);
+                    // Ambil data provinsi
+                    if (response.users_detail.provinsi) {
+                        const provinces = await getProvince();
+                        const province = provinces.find(p => p.code === response.users_detail.provinsi);
+                        if (province) alamat.push(province.name);
                     }
 
-                    $('#modal-detail [id=alamat]').text(alamat);
+                    $('#modal-detail [id=alamat]').text(alamat.join(', '));
                     $('#modal-detail [id=asalSekolah]').text(response.users_detail.asal_sekolah);
                     $('#modal-detail [id=penempatan]').text(response.users_detail.penempatan);
                     $('#modal-detail [id=instagram]').text(response.users_detail.instagram);
