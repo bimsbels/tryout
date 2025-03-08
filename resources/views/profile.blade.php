@@ -303,40 +303,19 @@ Profile
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    let res = response.data.map(item => {
-                        return {
-                            id: item.code,
-                            text: item.name
-                        };
-                    });
+                    let searchTerm = $('#provinsi').data('select2').$search.val().toLowerCase();
 
-                    return { results: res };
+                    let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
+
+                    let results = filtered.map(item => ({
+                        id: item.code,
+                        text: item.name
+                    }));
+
+                    return { results: results };
                 },
                 cache: true
             }
-        });
-
-        // Mengisi daftar provinsi secara langsung (opsional)
-        $.ajax({
-            url: 'https://wilayah.id/api/provinces.json',
-            type: 'GET',
-            dataType: 'json',
-            success: function (response) {
-                let res = response.data.map(item => {
-                    return { id: item.code, text: item.name };
-                });
-
-                res.forEach(item => {
-                    let newOption = new Option(item.text, item.id, false, false);
-                    $('#formasi').append(newOption).trigger('change');
-                });
-            }
-        });
-
-        // Reset kabupaten & kecamatan saat provinsi berubah
-        $('#provinsi').on("select2:select", function(e) {
-            $('#kabupaten').empty().append('<option value="" selected>-- Cari kabupaten/kota --</option>').trigger('change');
-            $('#kecamatan').empty().append('<option value="" selected>-- Cari kecamatan --</option>').trigger('change');
         });
 
         // KABUPATEN/KOTA
@@ -352,22 +331,19 @@ Profile
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    let res = response.data.map(item => {
-                        return {
-                            id: item.code,
-                            text: item.name
-                        };
-                    });
+                    let searchTerm = $('#kabupaten').data('select2').$search.val().toLowerCase();
 
-                    return { results: res };
+                    let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
+
+                    let results = filtered.map(item => ({
+                        id: item.code,
+                        text: item.name
+                    }));
+
+                    return { results: results };
                 },
                 cache: true
             }
-        });
-
-        // Reset kecamatan saat kabupaten/kota berubah
-        $('#kabupaten').on("select2:select", function(e) {
-            $('#kecamatan').empty().append('<option value="" selected>-- Cari kecamatan --</option>').trigger('change');
         });
 
         // KECAMATAN
@@ -383,14 +359,16 @@ Profile
                 dataType: 'json',
                 delay: 250,
                 processResults: function (response) {
-                    let res = response.data.map(item => {
-                        return {
-                            id: item.code,
-                            text: item.name
-                        };
-                    });
+                    let searchTerm = $('#kecamatan').data('select2').$search.val().toLowerCase();
 
-                    return { results: res };
+                    let filtered = response.data.filter(item => item.name.toLowerCase().includes(searchTerm));
+
+                    let results = filtered.map(item => ({
+                        id: item.code,
+                        text: item.name
+                    }));
+
+                    return { results: results };
                 },
                 cache: true
             }
