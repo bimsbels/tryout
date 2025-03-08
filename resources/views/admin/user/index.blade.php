@@ -235,7 +235,7 @@ Data User
 
     async function getDistrict(id) {
         return $.ajax({
-            url: 'https://wilayah.id/api/districts/' + id + '.json',
+            url: `https://wilayah.id/api/districts/${id}.json`,
             type: 'GET',
             dataType: 'json'
         });
@@ -243,7 +243,7 @@ Data User
 
     async function getRegency(id) {
         return $.ajax({
-            url: 'https://wilayah.id/api/regencies/' + id + '.json',
+            url: `https://wilayah.id/api/regencies/${id}.json`,
             type: 'GET',
             dataType: 'json'
         });
@@ -251,15 +251,14 @@ Data User
 
     async function getProvince(id) {
         return $.ajax({
-            url: 'https://wilayah.id/api/provinces.json',
+            url: `https://wilayah.id/api/provinces.json`,
             type: 'GET',
             dataType: 'json'
-        }).then(data => {
-            return data.data.find(province => province.code === id);
+        }).then(response => {
+            return response.data.find(province => province.code === id);
         });
     }
 
-    // Fungsi untuk menampilkan detail peserta
     function detailForm(url) {
         $.get(url)
             .done(async (response) => {
@@ -267,65 +266,57 @@ Data User
                 $('#modal-detail .modal-title').text(response.name);
                 $('#modal-detail .text').text("");
                 $('#modal-detail [id=idPeserta]').text(response.id);
-                $('#modal-detail [id=fotoProfile]').html(
-                    `<img id="fotoPeserta" src="${response.profile_photo_url}" alt="Foto ${response.name}" width="100px">`
-                );
+                $('#modal-detail [id=fotoProfile]').html(`<img id="fotoPeserta" src="${response.profile_photo_url}" alt="" width="100px">`);
                 $('#modal-detail [id=nama]').text(response.name);
                 $('#modal-detail [id=email]').text(response.email);
 
                 if (response.users_detail) {
-                    $('#modal-detail [id=noHP]').text(response.users_detail.no_hp || '-');
+                    $('#modal-detail [id=noHP]').text(response.users_detail.no_hp);
 
-                    // Proses alamat
-                    let alamat = [];
-
+                    let alamat = "";
                     try {
-                        const districts = await getDistrict(response.users_detail.kecamatan);
-                        const district = districts.find(d => d.code === response.users_detail.kecamatan);
-                        if (district) alamat.push(district.name);
+                        const district = await getDistrict(response.users_detail.kecamatan);
+                        alamat += district.data[0]?.name + ", ";
                     } catch (error) {
-                        console.error('Error fetching district:', error);
+                        console.error("Error fetching district:", error);
                     }
 
                     try {
-                        const regencies = await getRegency(response.users_detail.kabupaten);
-                        const regency = regencies.find(r => r.code === response.users_detail.kabupaten);
-                        if (regency) alamat.push(regency.name);
+                        const regency = await getRegency(response.users_detail.kabupaten);
+                        alamat += regency.data[0]?.name + ", ";
                     } catch (error) {
-                        console.error('Error fetching regency:', error);
+                        console.error("Error fetching regency:", error);
                     }
 
                     try {
                         const province = await getProvince(response.users_detail.provinsi);
-                        if (province) alamat.push(province.name);
+                        alamat += province?.name || "Tidak ditemukan";
                     } catch (error) {
-                        console.error('Error fetching province:', error);
+                        console.error("Error fetching province:", error);
                     }
 
-                    $('#modal-detail [id=alamat]').text(alamat.join(', ') || '-');
-                    $('#modal-detail [id=asalSekolah]').text(response.users_detail.asal_sekolah || '-');
-
-                    // Proses penempatan
+                    let penempatan = "";
                     try {
-                        const penempatan = await getProvince(response.users_detail.penempatan);
-                        $('#modal-detail [id=penempatan]').text(penempatan ? penempatan.name : '-');
+                        const province = await getProvince(response.users_detail.penempatan);
+                        penempatan = province?.name || "Tidak ditemukan";
                     } catch (error) {
-                        console.error('Error fetching penempatan:', error);
-                        $('#modal-detail [id=penempatan]').text('-');
+                        console.error("Error fetching penempatan:", error);
                     }
 
-                    $('#modal-detail [id=instagram]').text(response.users_detail.instagram || '-');
-                    $('#modal-detail [id=sumber]').text(response.users_detail.sumber_informasi || '-');
+                    $('#modal-detail [id=alamat]').text(alamat);
+                    $('#modal-detail [id=asalSekolah]').text(response.users_detail.asal_sekolah);
+                    $('#modal-detail [id=penempatan]').text(penempatan);
+                    $('#modal-detail [id=instagram]').text(response.users_detail.instagram);
+                    $('#modal-detail [id=sumber]').text(response.users_detail.sumber_informasi);
                 }
 
-                // Menampilkan sesi login
-                let textSession = response.sessions.map(session =>
-                    `<span class='badge bg-primary'>${session.ip_address} (${session.last_activity})</span><br>`
-                ).join('');
-                $('#modal-detail [id=login]').html(textSession || 'Belum ada sesi login.');
+                let textSession = "";
+                response.sessions.forEach(session => {
+                    textSession += `<span class='badge bg-primary'>${session.ip_address} (${session.last_activity})</span><br>`;
+                });
+                $('#modal-detail [id=login]').html(textSession);
             })
-            .fail((error) => {
-                console.error('Error fetching detail:', error);
+            .fail((errors) => {
                 alert('Tidak dapat menampilkan data.');
             });
     }

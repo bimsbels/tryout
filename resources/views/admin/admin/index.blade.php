@@ -263,6 +263,7 @@ Data Admin
         })
     }
 
+    // Fungsi untuk mengambil data kecamatan berdasarkan ID
     async function getDistrict(id) {
         return $.ajax({
             url: `https://wilayah.id/api/districts/${id}.json`,
@@ -271,6 +272,7 @@ Data Admin
         });
     }
 
+    // Fungsi untuk mengambil data kabupaten/kota berdasarkan ID
     async function getRegency(id) {
         return $.ajax({
             url: `https://wilayah.id/api/regencies/${id}.json`,
@@ -279,63 +281,76 @@ Data Admin
         });
     }
 
-    async function getProvince() {
+    // Fungsi untuk mengambil data provinsi berdasarkan ID
+    async function getProvince(id) {
         return $.ajax({
-            url: 'https://wilayah.id/api/provinces.json',
+            url: `https://wilayah.id/api/provinces.json`,
             type: 'GET',
             dataType: 'json'
+        }).then(response => {
+            return response.data.find(province => province.code === id);
         });
     }
 
+    // Fungsi untuk menampilkan detail data dalam modal
     function detailForm(url) {
         $.get(url)
             .done(async (response) => {
+                // Tampilkan modal
                 $('#modal-detail').modal('show');
-                $('#modal-detail .modal-title').text(response.name);
-                $('#modal-detail [id=idPeserta]').text(response.id);
-                $('#modal-detail [id=nama]').text(response.name);
-                $('#modal-detail [id=email]').text(response.email);
+                $('#modal-detail .modal-title').text(response.name || "Detail");
+                $('#modal-detail .text').text("");
+                $('#modal-detail [id=idPeserta]').text(response.id || "-");
+                $('#modal-detail [id=nama]').text(response.name || "-");
+                $('#modal-detail [id=email]').text(response.email || "-");
 
                 if (response.users_detail) {
-                    $('#modal-detail [id=noHP]').text(response.users_detail.no_hp);
+                    const userDetail = response.users_detail;
+                    $('#modal-detail [id=noHP]').text(userDetail.no_hp || "-");
+                    $('#modal-detail [id=asalSekolah]').text(userDetail.asal_sekolah || "-");
+                    $('#modal-detail [id=penempatan]').text(userDetail.penempatan || "-");
+                    $('#modal-detail [id=instagram]').text(userDetail.instagram || "-");
+                    $('#modal-detail [id=sumber]').text(userDetail.sumber_informasi || "-");
 
-                    let alamat = [];
-
-                    // Ambil data kecamatan
-                    if (response.users_detail.kecamatan) {
-                        const districts = await getDistrict(response.users_detail.kabupaten);
-                        const district = districts.find(d => d.code === response.users_detail.kecamatan);
-                        if (district) alamat.push(district.name);
+                    // Menggabungkan alamat lengkap
+                    let alamat = "";
+                    try {
+                        const district = await getDistrict(userDetail.kecamatan);
+                        alamat += district.data?.[0]?.name ? district.data[0].name + ", " : "";
+                    } catch (error) {
+                        console.error("Error fetching district:", error);
                     }
 
-                    // Ambil data kabupaten
-                    if (response.users_detail.kabupaten) {
-                        const regencies = await getRegency(response.users_detail.provinsi);
-                        const regency = regencies.find(r => r.code === response.users_detail.kabupaten);
-                        if (regency) alamat.push(regency.name);
+                    try {
+                        const regency = await getRegency(userDetail.kabupaten);
+                        alamat += regency.data?.[0]?.name ? regency.data[0].name + ", " : "";
+                    } catch (error) {
+                        console.error("Error fetching regency:", error);
                     }
 
-                    // Ambil data provinsi
-                    if (response.users_detail.provinsi) {
-                        const provinces = await getProvince();
-                        const province = provinces.find(p => p.code === response.users_detail.provinsi);
-                        if (province) alamat.push(province.name);
+                    try {
+                        const province = await getProvince(userDetail.provinsi);
+                        alamat += province?.name || "Tidak ditemukan";
+                    } catch (error) {
+                        console.error("Error fetching province:", error);
                     }
 
-                    $('#modal-detail [id=alamat]').text(alamat.join(', '));
-                    $('#modal-detail [id=asalSekolah]').text(response.users_detail.asal_sekolah);
-                    $('#modal-detail [id=penempatan]').text(response.users_detail.penempatan);
-                    $('#modal-detail [id=instagram]').text(response.users_detail.instagram);
-                    $('#modal-detail [id=sumber]').text(response.users_detail.sumber_informasi);
+                    $('#modal-detail [id=alamat]').text(alamat || "Tidak ditemukan");
                 }
 
-                let textSession = "";
-                response.sessions.forEach(session => {
-                    textSession += `<span class='badge bg-primary'>${session.ip_address} (${session.last_activity})</span><br>`;
-                });
-                $('#modal-detail [id=login]').html(textSession);
+                // Menampilkan sesi login
+                let sessionText = "";
+                if (Array.isArray(response.sessions) && response.sessions.length > 0) {
+                    response.sessions.forEach(session => {
+                        sessionText += `<span class='badge bg-primary'>${session.ip_address} (${session.last_activity})</span><br>`;
+                    });
+                } else {
+                    sessionText = "Tidak ada sesi login.";
+                }
+                $('#modal-detail [id=login]').html(sessionText);
             })
             .fail((errors) => {
+                console.error("Error fetching user details:", errors);
                 alert('Tidak dapat menampilkan data.');
             });
     }
