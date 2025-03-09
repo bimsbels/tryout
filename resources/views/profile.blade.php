@@ -185,10 +185,6 @@ Profile
             theme: 'bootstrap4',
         });
 
-        $('#formasi').select2({
-            theme: 'bootstrap4',
-        });
-
         $('#prodi').select2({
             theme: 'bootstrap4',
         });
@@ -238,181 +234,189 @@ Profile
             }
         });
 
-@if ($user->usersDetail != NULL)
-    @if ($user->usersDetail->provinsi != NULL)
-    // Load province data
-    $.ajax({
-        type: 'GET',
-        url: '/api/province/{{ $user->usersDetail->provinsi }}',
-        dataType: 'json'
-    }).then(function (res) {
-        // Perbaikan: Gunakan res.kode langsung, bukan res.data.kode
-        $('#provinsi').append(new Option(res.nama, res.kode, true, true)).trigger('change');
-    });
-    @endif
+        @if ($user->usersDetail != NULL)
+            @if ($user->usersDetail->provinsi != NULL)
+            // Load province data
+            $.ajax({
+                type: 'GET',
+                url: '/api/province/{{ $user->usersDetail->provinsi }}',
+                dataType: 'json'
+            }).then(function (res) {
+                // Perbaikan: Gunakan res.kode langsung, bukan res.data.kode
+                $('#provinsi').append(new Option(res.nama, res.kode, true, true)).trigger('change');
+            });
+            @endif
 
-    @if ($user->usersDetail->kabupaten != NULL)
-    // Load regency data
-    $.ajax({
-        type: 'GET',
-        url: '/api/regency/{{ $user->usersDetail->kabupaten }}',
-        dataType: 'json'
-    }).then(function (res) {
-        $('#kabupaten').append(new Option(res.nama, res.kode, true, true)).trigger('change');
-    });
-    @endif
+            @if ($user->usersDetail->kabupaten != NULL)
+            // Load regency data
+            $.ajax({
+                type: 'GET',
+                url: '/api/regency/{{ $user->usersDetail->kabupaten }}',
+                dataType: 'json'
+            }).then(function (res) {
+                $('#kabupaten').append(new Option(res.nama, res.kode, true, true)).trigger('change');
+            });
+            @endif
 
-    @if ($user->usersDetail->kecamatan != NULL)
-    // Load district data
-    $.ajax({
-        type: 'GET',
-        url: '/api/district/{{ $user->usersDetail->kecamatan }}',
-        dataType: 'json'
-    }).then(function (res) {
-        $('#kecamatan').append(new Option(res.nama, res.kode, true, true)).trigger('change');
-    });
-    @endif
+            @if ($user->usersDetail->kecamatan != NULL)
+            // Load district data
+            $.ajax({
+                type: 'GET',
+                url: '/api/district/{{ $user->usersDetail->kecamatan }}',
+                dataType: 'json'
+            }).then(function (res) {
+                $('#kecamatan').append(new Option(res.nama, res.kode, true, true)).trigger('change');
+            });
+            @endif
 
-    @if ($user->usersDetail->penempatan != NULL)
-    // Load penempatan data
-    $.ajax({
-        type: 'GET',
-        url: '/api/province/{{ $user->usersDetail->penempatan }}',
-        dataType: 'json'
-    }).then(function (res) {
-        $('#formasi').append(new Option(res.nama, res.kode, true, true)).trigger('change');
-    });
-    @endif
-@endif
+            @if ($user->usersDetail->penempatan != NULL)
+            // Load penempatan data
+            $.ajax({
+                type: 'GET',
+                url: '/api/province/{{ $user->usersDetail->penempatan }}',
+                dataType: 'json'
+            }).then(function (res) {
+                $('#formasi').append(new Option(res.nama, res.kode, true, true)).trigger('change');
+            });
+            @endif
+        @endif
 
-// Load all provinces for formasi dropdown
-$.ajax({
-    url: '/api/provinces',
-    type: 'get',
-    dataType: 'json',
-    success: function (response) {
-        response.forEach(item => {
-            $('#formasi').append(new Option(item.nama, item.kode));
+        // Load all provinces for formasi dropdown
+        $('#formasi').select2({
+            theme: 'bootstrap4',
+            ajax: {
+                url: '/api/provinces',
+                type: 'GET',
+                dataType: 'json',
+                processResults: function(response) {
+                    let results = [];
+                    if (Array.isArray(response)) {
+                        results = response.map(item => ({
+                            id: item.kode,
+                            text: item.nama
+                        }));
+                    }
+                    return { results };
+                },
+                cache: true
+            }
         });
-        $('#formasi').trigger('change');
-    }
-});
 
-// Initialize province select2
-$('#provinsi').select2({
-    theme: 'bootstrap4',
-    minimumInputLength: 3,
-    ajax: {
-        url: '/api/search',
-        type: 'GET',
-        dataType: 'json',
-        delay: 250,
-        data: function(params) {
-            return { term: params.term };
-        },
-        processResults: function(response) {
-            console.log('API Response:', response); // Debugging
-            let results = [];
-            if (Array.isArray(response)) {
-                results = response
-                    .map(item => ({
-                        id: item.kode, // Tidak perlu konversi karena sekarang sudah string
-                        text: item.nama
-                    }))
-                    // Filter hanya provinsi (kode 2 karakter)
-                    .filter(item => item.id && item.id.toString().indexOf('.') === -1);
+        // Initialize province select2
+        $('#provinsi').select2({
+            theme: 'bootstrap4',
+            minimumInputLength: 3,
+            ajax: {
+                url: '/api/search',
+                type: 'GET',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return { term: params.term };
+                },
+                processResults: function(response) {
+                    console.log('API Response:', response); // Debugging
+                    let results = [];
+                    if (Array.isArray(response)) {
+                        results = response
+                            .map(item => ({
+                                id: item.kode, // Tidak perlu konversi karena sekarang sudah string
+                                text: item.nama
+                            }))
+                            // Filter hanya provinsi (kode 2 karakter)
+                            .filter(item => item.id && item.id.toString().indexOf('.') === -1);
+                    }
+                    console.log('Processed Results:', { results }); // Debugging
+                    return { results };
+                },
+                cache: true
             }
-            console.log('Processed Results:', { results }); // Debugging
-            return { results };
-        },
-        cache: true
-    }
-});
+        });
 
-// Initialize kabupaten select2
-$('#kabupaten').select2({
-    theme: 'bootstrap4',
-    minimumInputLength: 1,
-    ajax: {
-        url: '/api/search',
-        type: 'GET',
-        dataType: 'json',
-        delay: 250,
-        data: function(params) {
-            const provCode = $('#provinsi').val();
-            console.log('Kabupaten Search Params:', { term: params.term, provinsi: provCode }); // Debugging
-            return {
-                term: params.term,
-                provinsi: provCode // Kirim kode provinsi ke backend
-            };
-        },
-        processResults: function(response) {
-            const provCode = $('#provinsi').val();
-            let results = [];
-            if (provCode && Array.isArray(response)) {
-                results = response
-                    .map(item => {
-                        const id = item.kode; // Tidak perlu konversi karena sekarang sudah string
-                        console.log('Mapped Kabupaten Item:', { id, text: item.nama }); // Debugging
-                        console.log('Provinsi Code:', provCode); // Debugging
-                        return { id, text: item.nama };
-                    })
-                    // Filter kabupaten (kode dengan format xx.xx)
-                    .filter(item => {
-                        // Cek apakah format kode adalah xx.xx
-                        const isValid = item.id && 
-                                       item.id.startsWith(provCode) && 
-                                       item.id.split('.').length === 2;
-                        console.log('Filter Check:', { id: item.id, isValid }); // Debugging
-                        return isValid;
-                    });
+        // Initialize kabupaten select2
+        $('#kabupaten').select2({
+            theme: 'bootstrap4',
+            minimumInputLength: 1,
+            ajax: {
+                url: '/api/search',
+                type: 'GET',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    const provCode = $('#provinsi').val();
+                    console.log('Kabupaten Search Params:', { term: params.term, provinsi: provCode }); // Debugging
+                    return {
+                        term: params.term,
+                        provinsi: provCode // Kirim kode provinsi ke backend
+                    };
+                },
+                processResults: function(response) {
+                    const provCode = $('#provinsi').val();
+                    let results = [];
+                    if (provCode && Array.isArray(response)) {
+                        results = response
+                            .map(item => {
+                                const id = item.kode; // Tidak perlu konversi karena sekarang sudah string
+                                console.log('Mapped Kabupaten Item:', { id, text: item.nama }); // Debugging
+                                console.log('Provinsi Code:', provCode); // Debugging
+                                return { id, text: item.nama };
+                            })
+                            // Filter kabupaten (kode dengan format xx.xx)
+                            .filter(item => {
+                                // Cek apakah format kode adalah xx.xx
+                                const isValid = item.id &&
+                                               item.id.startsWith(provCode) &&
+                                               item.id.split('.').length === 2;
+                                console.log('Filter Check:', { id: item.id, isValid }); // Debugging
+                                return isValid;
+                            });
+                    }
+                    console.log('Kabupaten Processed Results:', { results }); // Debugging
+                    return { results };
+                },
+                cache: true
             }
-            console.log('Kabupaten Processed Results:', { results }); // Debugging
-            return { results };
-        },
-        cache: true
-    }
-});
+        });
 
-// Initialize kecamatan select2
-$('#kecamatan').select2({
-    theme: 'bootstrap4',
-    minimumInputLength: 1,
-    ajax: {
-        url: '/api/search',
-        type: 'GET',
-        dataType: 'json',
-        delay: 250,
-        data: function(params) {
-            const kabCode = $('#kabupaten').val();
-            console.log('Kecamatan Search Params:', { term: params.term, kabupaten: kabCode }); // Debugging
-            return {
-                term: params.term,
-                kabupaten: kabCode // Kirim kode kabupaten ke backend
-            };
-        },
-        processResults: function(response) {
-            const kabCode = $('#kabupaten').val();
-            let results = [];
-            if (kabCode && Array.isArray(response)) {
-                results = response
-                    .map(item => ({
-                        id: item.kode, // Tidak perlu konversi karena sekarang sudah string
-                        text: item.nama
-                    }))
-                    // Filter kecamatan (kode dengan format xx.xx.xx)
-                    .filter(item => 
-                        item.id && 
-                        item.id.startsWith(kabCode) && 
-                        item.id.split('.').length === 3
-                    );
+        // Initialize kecamatan select2
+        $('#kecamatan').select2({
+            theme: 'bootstrap4',
+            minimumInputLength: 1,
+            ajax: {
+                url: '/api/search',
+                type: 'GET',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    const kabCode = $('#kabupaten').val();
+                    console.log('Kecamatan Search Params:', { term: params.term, kabupaten: kabCode }); // Debugging
+                    return {
+                        term: params.term,
+                        kabupaten: kabCode // Kirim kode kabupaten ke backend
+                    };
+                },
+                processResults: function(response) {
+                    const kabCode = $('#kabupaten').val();
+                    let results = [];
+                    if (kabCode && Array.isArray(response)) {
+                        results = response
+                            .map(item => ({
+                                id: item.kode, // Tidak perlu konversi karena sekarang sudah string
+                                text: item.nama
+                            }))
+                            // Filter kecamatan (kode dengan format xx.xx.xx)
+                            .filter(item =>
+                                item.id &&
+                                item.id.startsWith(kabCode) &&
+                                item.id.split('.').length === 3
+                            );
+                    }
+                    console.log('Kecamatan Processed Results:', { results }); // Debugging
+                    return { results };
+                },
+                cache: true
             }
-            console.log('Kecamatan Processed Results:', { results }); // Debugging
-            return { results };
-        },
-        cache: true
-    }
-});
+        });
 
         // Reset dependent dropdowns when parent changes
         $('#provinsi').on("select2:selecting", function(e) {
