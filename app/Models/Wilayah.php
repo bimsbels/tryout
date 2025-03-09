@@ -12,4 +12,11 @@ class Wilayah extends Model
     protected $table = 'wilayah';
 
     protected $primaryKey = 'kode';
+    
+    // Tentukan bahwa primary key adalah string, bukan integer
+    public $incrementing = false;
+    protected $keyType = 'string';
+    
+    // Matikan timestamps jika tabel tidak memiliki kolom created_at dan updated_at
+    public $timestamps = false;
 }

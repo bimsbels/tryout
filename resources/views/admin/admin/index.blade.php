@@ -1,393 +1,356 @@
 @extends('layouts/admin/app')
 
 @section('title')
-Data Admin
+    Data Admin
 @endsection
 
 @section('breadcrumb')
-@parent
-<li class="breadcrumb-item active">Data Admin</li>
+    @parent
+    <li class="breadcrumb-item active">Data Admin</li>
 @endsection
 
 @section('content')
-<div class="container-fluid">
+    <div class="container-fluid">
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <button onclick="addForm('{{ route('admin.admin.store') }}')" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</button>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <button onclick="addForm('{{ route('admin.admin.store') }}')" class="btn btn-outline-success"><i
+                                class="fa fa-plus-circle"></i> Tambah</button>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <form action="" method="post" class="form-member">
+                            @csrf
+                            <table class="table table-bordered table-striped center-header" id="Table-User">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%">No</th>
+                                        <th>Nama</th>
+                                        <th>Email</th>
+                                        <th>No HP</th>
+                                        <th>Roles</th>
+                                        <th style="width: 15%"><i class="fa fa-cog"></i></th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </form>
+                        <!-- /.row -->
+                    </div>
+                    <!-- ./card-body -->
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <form action="" method="post" class="form-member">
-                        @csrf
-                        <table class="table table-bordered table-striped center-header" id="Table-User">
-                            <thead>
-                                <tr>
-                                    <th style="width: 5%">No</th>
-                                    <th>Nama</th>
-                                    <th>Email</th>
-                                    <th>No HP</th>
-                                    <th>Roles</th>
-                                    <th style="width: 15%"><i class="fa fa-cog"></i></th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </form>
-                    <!-- /.row -->
-                </div>
-                <!-- ./card-body -->
+                <!-- /.card -->
             </div>
-            <!-- /.card -->
+            <!-- /.col -->
         </div>
-        <!-- /.col -->
+        <!-- /.row -->
+
+        <!-- Main row -->
+
+        <!-- /.row -->
     </div>
-    <!-- /.row -->
 
-    <!-- Main row -->
-
-    <!-- /.row -->
-</div>
-
-@includeIf('admin.admin.form')
-@includeIf('admin.admin.reset')
-@includeIf('admin.admin.detail')
+    @includeIf('admin.admin.form')
+    @includeIf('admin.admin.reset')
+    @includeIf('admin.admin.detail')
 
 @endsection
 
 @push('scripts')
-<script>
-    let tableUser;
-    $(function() {
-        $('#user').select2({
-            minimumInputLength: 3,
-            ajax: {
-                url: "{{ route('admin.admin.getUser') }}",
-                type: "post",
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        _token: '{{ csrf_token() }}',
-                        search: params.term
-                    };
-                },
-                processResults: function (response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: true
-            }
+    <script>
+        let tableUser;
+        $(function () {
+            $('#user').select2({
+                minimumInputLength: 3,
+                ajax: {
+                    url: "{{ route('admin.admin.getUser') }}",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            _token: '{{ csrf_token() }}',
+                            search: params.term
+                        };
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: response
+                        };
+                    },
+                    cache: true
+                }
+            });
         });
-    });
 
-    $(function() {
-        tableUser = $('#Table-User').DataTable({
-            processing: true
-            , serverside: true
-            , responsive: true
-            , autoWidth: false
-            , ajax: {
-                url: '{{ route('admin.admin.data') }}'
-            , }
-            , columns: [{
+        $(function () {
+            tableUser = $('#Table-User').DataTable({
+                processing: true
+                , serverside: true
+                , responsive: true
+                , autoWidth: false
+                , ajax: {
+                    url: '{{ route('admin.admin.data') }}'
+                    ,
+                }
+                , columns: [{
                     data: 'DT_RowIndex'
                     , searchable: false
                     , sortable: false
                 }
-                , {
+                    , {
                     data: 'name'
                 }
-                , {
+                    , {
                     data: 'email'
                 }
-                , {
+                    , {
                     data: 'no_hp'
                 }
-                , {
+                    , {
                     data: 'roles'
                 }
-                , {
+                    , {
                     data: 'aksi'
                     , searchable: false
                     , sortable: false
                 }
-            , ]
-            , dom: '<"container-fluid"<"row"<"col"B><"col"l><"col"f>>>rtip'
-            , buttons: [
-                'copy', 'excel', 'pdf'
-            ]
-            , columnDefs: [
-                { className: 'text-center', targets: [0, 3, 4, 5] },
-            ]
+                    ,]
+                , dom: '<"container-fluid"<"row"<"col"B><"col"l><"col"f>>>rtip'
+                , buttons: [
+                    'copy', 'excel', 'pdf'
+                ]
+                , columnDefs: [
+                    { className: 'text-center', targets: [0, 3, 4, 5] },
+                ]
+            });
+
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+
+            $('#modal-form form').on('submit', function (e) {
+                if (!e.preventDefault()) {
+                    $.post($('#modal-form form').attr('action'), $('#modal-form form').serialize())
+                        .done((response) => {
+                            $('#modal-form').modal('hide');
+                            tableUser.ajax.reload();
+                            toastr.options = { "positionClass": "toast-bottom-right" };
+                            toastr.success('Data berhasil disimpan.');
+                        })
+                        .fail((errors) => {
+                            // toastr.error('Tidak dapat menyimpan data.');
+                            return;
+                        });
+                }
+            }
+            )
+
+            $('#modal-reset form').on('submit', function (e) {
+                if (!e.preventDefault()) {
+                    $.post($('#modal-reset form').attr('action'), $('#modal-reset form').serialize())
+                        .done((response) => {
+                            $('#modal-reset').modal('hide');
+                            toastr.options = { "positionClass": "toast-bottom-right" };
+                            toastr.success('Data berhasil disimpan.');
+                        })
+                        .fail((errors) => {
+                            // toastr.error('Tidak dapat menyimpan data.');
+                            return;
+                        });
+                }
+            }
+            )
         });
 
-        'use strict'
+        function addForm(url) {
+            $('#modal-form').modal('show');
+            $('#modal-form .modal-title').text('Tambah Admin');
 
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        var forms = document.querySelectorAll('.needs-validation')
+            $('#modal-form form')[0].classList.remove('was-validated');
+            $('#modal-form form')[0].reset();
+            $('#modal-form form').attr('action', url);
+            $('#modal-form [name=_method]').val('post');
+            $('#modal-form [name=name]').focus();
+        }
 
-        // Loop over them and prevent submission
-        Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
-
-            form.classList.add('was-validated')
-        }, false)
-        })
-
-        $('#modal-form form').on('submit', function(e) {
-            if (! e.preventDefault()) {
-                $.post($('#modal-form form').attr('action'), $('#modal-form form').serialize())
-                .done((response) => {
-                    $('#modal-form').modal('hide');
-                    tableUser.ajax.reload();
-                    toastr.options = {"positionClass": "toast-bottom-right"};
-                    toastr.success('Data berhasil disimpan.');
-                })
-                .fail((errors) => {
-                    // toastr.error('Tidak dapat menyimpan data.');
-                    return;
-                });
-                }
-            }
-        )
-
-        $('#modal-reset form').on('submit', function(e) {
-            if (! e.preventDefault()) {
-                $.post($('#modal-reset form').attr('action'), $('#modal-reset form').serialize())
-                .done((response) => {
-                    $('#modal-reset').modal('hide');
-                    toastr.options = {"positionClass": "toast-bottom-right"};
-                    toastr.success('Data berhasil disimpan.');
-                })
-                .fail((errors) => {
-                    // toastr.error('Tidak dapat menyimpan data.');
-                    return;
-                });
-                }
-            }
-        )
-    });
-
-    function addForm(url) {
-        $('#modal-form').modal('show');
-        $('#modal-form .modal-title').text('Tambah Admin');
-
-        $('#modal-form form')[0].classList.remove('was-validated');
-        $('#modal-form form')[0].reset();
-        $('#modal-form form').attr('action', url);
-        $('#modal-form [name=_method]').val('post');
-        $('#modal-form [name=name]').focus();
-    }
-
-    function deleteData(url) {
-        Swal.fire({
-            title: 'Apakah kamu yakin akan menghapus data?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya',
-            cancelButtonText: 'Tidak'
+        function deleteData(url) {
+            Swal.fire({
+                title: 'Apakah kamu yakin akan menghapus data?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak'
             }).then((result) => {
-            if (result.isConfirmed) {
-                $.post(url, {
-                    '_token': $('[name=csrf-token]').attr('content'),
-                    '_method': 'delete'
-                })
-                .done((response) => {
-                    tableUser.ajax.reload();
-                    toastr.options = {"positionClass": "toast-bottom-right"};
-                    toastr.success('Data berhasil dihapus.');
-                })
-                .fail((response) => {
-                    toastr.error('Tidak dapat menghapus data.');
-                    return;
-                })
-            }
-        })
-    }
-
-    function generatePass(name) {
-        // change 12 to the length you want the hash
-        var pass = '';
-        var str='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        +  'abcdefghijklmnopqrstuvwxyz0123456789@#$';
-
-        for (let i = 1; i <= 8; i++) {
-            var char = Math.floor(Math.random()* str.length + 1);
-            pass += str.charAt(char)
-        }
-        if (name === 'reset') {
-            $('#PasswordReset').val(pass);
-        } else if (name === 'new') {
-            $('#Password').val(pass);
-        }
-    }
-
-    function makeAdmin(url) {
-        let action = url.split('/')[6];
-        let title = (action === 'make' ? 'Apakah anda yakin akan mengubah user menjadi admin?' : 'Apakah anda yakin akan merevoke hak akses admin?');
-        let success = action === 'make' ? 'User berhasil menjadi admin' : 'Hak akses admin user direvoke';
-        Swal.fire({
-            title: title,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya',
-            cancelButtonText: 'Tidak'
-            }).then((result) => {
-            if (result.isConfirmed) {
-                $.post(url, {
-                    '_token': $('[name=csrf-token]').attr('content'),
-                    '_method': 'post'
-                })
-                .done((response) => {
-                    tableUser.ajax.reload();
-                    toastr.options = {"positionClass": "toast-bottom-right"};
-                    toastr.success(success);
-                })
-                .fail((response) => {
-                    toastr.error('Proses gagal.');
-                    return;
-                })
-            }
-        })
-    }
-
-    // Fungsi untuk mengambil data kecamatan berdasarkan kode kabupaten/kota
-    async function getDistrict(districtCode) {
-        try {
-            const response = await $.ajax({
-                url: `https://wilayah.id/api/districts/${districtCode.slice(0, 4)}.json`, // Mengambil kecamatan berdasarkan kode kabupaten/kota
-                type: 'GET',
-                dataType: 'json'
-            });
-            return response.data.find(d => d.code === districtCode) || { name: 'Tidak ditemukan' };
-        } catch (error) {
-            console.error('Error fetching district:', error);
-            return { name: 'Error mengambil data kecamatan' };
-        }
-    }
-
-    // Fungsi untuk mengambil data kabupaten/kota berdasarkan kode provinsi
-    async function getRegency(regencyCode) {
-        try {
-            const response = await $.ajax({
-                url: `https://wilayah.id/api/regencies/${regencyCode.slice(0, 2)}.json`, // Mengambil kabupaten/kota berdasarkan kode provinsi
-                type: 'GET',
-                dataType: 'json'
-            });
-            return response.data.find(r => r.code === regencyCode) || { name: 'Tidak ditemukan' };
-        } catch (error) {
-            console.error('Error fetching regency:', error);
-            return { name: 'Error mengambil data kabupaten/kota' };
-        }
-    }
-
-    // Fungsi untuk mengambil data provinsi
-    async function getProvince(provinceCode) {
-        try {
-            const response = await $.ajax({
-                url: 'https://wilayah.id/api/provinces.json',
-                type: 'GET',
-                dataType: 'json'
-            });
-            return response.data.find(p => p.code === provinceCode) || { name: 'Tidak ditemukan' };
-        } catch (error) {
-            console.error('Error fetching province:', error);
-            return { name: 'Error mengambil data provinsi' };
-        }
-    }
-
-    // Fungsi untuk menampilkan detail data dalam modal
-    function detailForm(url) {
-        $.get(url)
-            .done(async (response) => {
-                $('#modal-detail').modal('show');
-                $('#modal-detail .modal-title').text(response.name || 'Detail Peserta');
-                $('#modal-detail [id=idPeserta]').text(response.id || '-');
-                $('#modal-detail [id=nama]').text(response.name || '-');
-                $('#modal-detail [id=email]').text(response.email || '-');
-
-                if (response.users_detail) {
-                    const userDetail = response.users_detail;
-                    $('#modal-detail [id=noHP]').text(userDetail.no_hp || '-');
-                    $('#modal-detail [id=asalSekolah]').text(userDetail.asal_sekolah || '-');
-                    $('#modal-detail [id=instagram]').text(userDetail.instagram || '-');
-                    $('#modal-detail [id=sumber]').text(userDetail.sumber_informasi || '-');
-
-                    // Menggabungkan alamat lengkap
-                    let alamat = '';
-
-                    try {
-                        const district = await getDistrict(userDetail.kecamatan);
-                        alamat += district.name + ', ';
-                    } catch (error) {
-                        console.error('Error:', error);
-                    }
-
-                    try {
-                        const regency = await getRegency(userDetail.kabupaten);
-                        alamat += regency.name + ', ';
-                    } catch (error) {
-                        console.error('Error:', error);
-                    }
-
-                    try {
-                        const province = await getProvince(userDetail.provinsi);
-                        alamat += province.name;
-                    } catch (error) {
-                        console.error('Error:', error);
-                    }
-
-                    $('#modal-detail [id=alamat]').text(alamat || 'Alamat tidak lengkap');
-
-                    // Mengambil penempatan (diasumsikan menggunakan kode provinsi)
-                    try {
-                        const penempatan = await getProvince(userDetail.penempatan);
-                        $('#modal-detail [id=penempatan]').text(penempatan.name || '-');
-                    } catch (error) {
-                        console.error('Error:', error);
-                        $('#modal-detail [id=penempatan]').text('Tidak ditemukan');
-                    }
+                if (result.isConfirmed) {
+                    $.post(url, {
+                        '_token': $('[name=csrf-token]').attr('content'),
+                        '_method': 'delete'
+                    })
+                        .done((response) => {
+                            tableUser.ajax.reload();
+                            toastr.options = { "positionClass": "toast-bottom-right" };
+                            toastr.success('Data berhasil dihapus.');
+                        })
+                        .fail((response) => {
+                            toastr.error('Tidak dapat menghapus data.');
+                            return;
+                        })
                 }
-
-                // Menampilkan sesi login
-                let textSession = '';
-                if (Array.isArray(response.sessions) && response.sessions.length > 0) {
-                    response.sessions.forEach(session => {
-                        textSession += `<span class='badge bg-primary'>${session.ip_address} (${session.last_activity})</span><br>`;
-                    });
-                } else {
-                    textSession = 'Tidak ada sesi login.';
-                }
-                $('#modal-detail [id=login]').html(textSession);
             })
-            .fail((error) => {
-                console.error('Error fetching user details:', error);
-                alert('Tidak dapat menampilkan data.');
+        }
+
+        function generatePass(name) {
+            // change 12 to the length you want the hash
+            var pass = '';
+            var str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                + 'abcdefghijklmnopqrstuvwxyz0123456789@#$';
+
+            for (let i = 1; i <= 8; i++) {
+                var char = Math.floor(Math.random() * str.length + 1);
+                pass += str.charAt(char)
+            }
+            if (name === 'reset') {
+                $('#PasswordReset').val(pass);
+            } else if (name === 'new') {
+                $('#Password').val(pass);
+            }
+        }
+
+        function makeAdmin(url) {
+            let action = url.split('/')[6];
+            let title = (action === 'make' ? 'Apakah anda yakin akan mengubah user menjadi admin?' : 'Apakah anda yakin akan merevoke hak akses admin?');
+            let success = action === 'make' ? 'User berhasil menjadi admin' : 'Hak akses admin user direvoke';
+            Swal.fire({
+                title: title,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post(url, {
+                        '_token': $('[name=csrf-token]').attr('content'),
+                        '_method': 'post'
+                    })
+                        .done((response) => {
+                            tableUser.ajax.reload();
+                            toastr.options = { "positionClass": "toast-bottom-right" };
+                            toastr.success(success);
+                        })
+                        .fail((response) => {
+                            toastr.error('Proses gagal.');
+                            return;
+                        })
+                }
+            })
+        }
+
+        async function getDistrict(id) {
+            return $.ajax({
+                url: '/district/' + id,
+                type: 'GET',
+                dataType: 'json'
             });
-    }
+        }
 
-    function resetPassword(url) {
-        $('#modal-reset').modal('show');
-        $('#modal-reset .modal-title').text('Reset Password');
+        async function getRegency(id) {
+            return $.ajax({
+                url: '/regency/' + id,
+                type: 'GET',
+                dataType: 'json'
+            });
+        }
 
-        $('#modal-reset form')[0].classList.remove('was-validated');
-        $('#modal-reset form')[0].reset();
-        $('#modal-reset form').attr('action', url);
-        $('#modal-reset [name=_method]').val('post');
-        $('#modal-reset [name=name]').focus();
-    }
+        async function getProvince(id) {
+            return $.ajax({
+                url: '/province/' + id,
+                type: 'GET',
+                dataType: 'json'
+            });
+        }
 
-</script>
+        function detailForm(url) {
+            $.get(url)
+                .done(async (response) => {
+                    $('#modal-detail').modal('show');
+                    $('#modal-detail .modal-title').text(response.name);
+                    $('#modal-detail .text').text("");
+                    $('#modal-detail [id=idPeserta]').text(response.id);
+                    $('#modal-detail [id=nama]').text(response.name);
+                    $('#modal-detail [id=email]').text(response.email);
+                    if (response.users_detail != null) {
+                        $('#modal-detail [id=noHP]').text(response.users_detail.no_hp);
+                        let alamat = "";
+                        try {
+                            const result = await getDistrict(response.users_detail.kecamatan);
+                            alamat += result.nama + ", ";
+                        } catch (error) {
+                            console.log(error);
+                        }
+                        try {
+                            const result = await getRegency(response.users_detail.kabupaten);
+                            alamat += result.nama + ", ";
+                        } catch (error) {
+                            console.log(error);
+                        }
+                        try {
+                            const result = await getProvince(response.users_detail.provinsi);
+                            alamat += result.nama;
+                        } catch (error) {
+                            console.log(error);
+                        }
+                        $('#modal-detail [id=alamat]').text(alamat);
+                        $('#modal-detail [id=asalSekolah]').text(response.users_detail.asal_sekolah);
+                        $('#modal-detail [id=penempatan]').text(response.users_detail.penempatan);
+                        $('#modal-detail [id=instagram]').text(response.users_detail.instagram);
+                        $('#modal-detail [id=sumber]').text(response.users_detail.sumber_informasi);
+                    }
+                    let textSession = "";
+                    if (response.sessions && response.sessions.length > 0) {
+                        response.sessions.forEach(session => {
+                            textSession += `<span class='badge bg-primary'>${session.ip_address} (${session.last_activity})</span>` + "<br>";
+                        });
+                    } else {
+                        textSession = "Tidak ada sesi login.";
+                    }
+                    $('#modal-detail [id=login]').html(textSession);
+                })
+                .fail((errors) => {
+                    alert('Tidak dapat menampilkan data.');
+                    return;
+                });
+        }
+
+        function resetPassword(url) {
+            $('#modal-reset').modal('show');
+            $('#modal-reset .modal-title').text('Reset Password');
+
+            $('#modal-reset form')[0].classList.remove('was-validated');
+            $('#modal-reset form')[0].reset();
+            $('#modal-reset form').attr('action', url);
+            $('#modal-reset [name=_method]').val('post');
+            $('#modal-reset [name=name]').focus();
+        }
+
+    </script>
 @endpush
