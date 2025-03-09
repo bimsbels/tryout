@@ -50,7 +50,7 @@ Profile
                                     <option @if($user->usersDetail) {{ $user->usersDetail->prodi == 1 ? 'selected' : '' }} @endif value="1">D3 - Statistika</option>
                                 </select>
                                 <div class="invalid-feedback">
-                                    Kolom kabupaten/kota tidak boleh kosong.
+                                    Kolom program tidak boleh kosong.
                                 </div>
                             </div>
                             <div class="form-group required mb-2">
@@ -284,18 +284,28 @@ Profile
         // Load all provinces for formasi dropdown
         $('#formasi').select2({
             theme: 'bootstrap4',
+            minimumInputLength: 0,
             ajax: {
-                url: '/api/provinces',
+                url: '/api/search',
                 type: 'GET',
                 dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return { term: params.term };
+                },
                 processResults: function(response) {
+                    console.log('API Response:', response); // Debugging
                     let results = [];
                     if (Array.isArray(response)) {
-                        results = response.map(item => ({
-                            id: item.kode,
-                            text: item.nama
-                        }));
+                        results = response
+                            .map(item => ({
+                                id: item.kode, // Tidak perlu konversi karena sekarang sudah string
+                                text: item.nama
+                            }))
+                            // Filter hanya provinsi (kode 2 karakter)
+                            .filter(item => item.id && item.id.toString().indexOf('.') === -1);
                     }
+                    console.log('Processed Results:', { results }); // Debugging
                     return { results };
                 },
                 cache: true
