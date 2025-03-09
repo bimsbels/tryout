@@ -82,7 +82,7 @@
                                                     </div>
                                                     @if($pembelian->status == 'Belum dibayar')
                                                     <div class="col-lg-3">
-                                                        <button id="apply" type="submit" class="btn btn-{{ $pembelian->voucher_id ? 'danger' : 'primary' }}"><i class="fa fa-{{ $pembelian->voucher_id ? 'times' : 'check' }}"></i></button>
+                                                        <button id="apply" type="submit" class="btn btn-{{ $pembelian->voucher_id ? 'danger' : 'primary' }}"><i class="fas fa-{{ $pembelian->voucher_id ? 'times' : 'check' }}"></i></button>
                                                     </div>
                                                     @endif
                                                 </div>
