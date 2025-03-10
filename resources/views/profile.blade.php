@@ -116,7 +116,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group required mb-2">
-                                    <label for="sumber" class="col-form-label">Foto Profil</label>
+                                    <label for="Image" class="col-form-label">Foto Profil</label>
                                     <input type="file" name="image" placeholder="Pilih Foto Profil" class="form-control"
                                            id="image">
                                     <span style="color: red; font-size: 12px">*Upload foto berukuran maksimal 2MB</span>
@@ -225,13 +225,18 @@
                     submitButton.html('Loading <div class="spinner-border spinner-border-sm" role="status"></div>');
                     submitButton.attr('type', 'button');
 
+                    // Create FormData object for file uploads
+                    let formData = new FormData(this);
+
                     $.ajax({
                         type: 'POST',
                         url: $(this).attr('action'),
-                        data: $(this).serialize(),
+                        data: formData,
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
+                        contentType: false, // Required for file uploads
+                        processData: false, // Required for file uploads
                         success: function (response) {
                             submitButton.html(originalHtml);
                             submitButton.attr('type', 'submit');
@@ -249,6 +254,8 @@
                             }
                         },
                         error: function (errors) {
+                            submitButton.html(originalHtml);
+                            submitButton.attr('type', 'submit');
                             toastr.options = {"positionClass": "toast-bottom-right"};
                             toastr.error(errors.responseJSON.message);
                         }
