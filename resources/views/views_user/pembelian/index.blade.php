@@ -133,11 +133,11 @@
                                             </form>
                                             @elseif($pembelian->status == 'Sukses')
                                                 @if ($pembelian->paket_id == 'd5f57505-fb5a-4f59-a301-3722ef581844')
-                                                <a target="_blank" href="https://chat.whatsapp.com/CKsDXB9OJYZFWfxlYk5QPH" type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
+                                                <a target="_blank" href="https://chat.whatsapp.com/IavEtnpTOwZIETqkHGJlwp" type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
                                                 @elseif($pembelian->paket_id == '0df8c9b0-d352-448b-9611-abadffc4f46d')
                                                 <a target="_blank" href="https://chat.whatsapp.com/GQefjygQnl82v9OlXwpPbL" type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
                                                 @else
-                                                <a target="_blank" href="https://chat.whatsapp.com/BzxL0RHOfXd1QhukyYzXTz" type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
+                                                <a target="_blank" href="https://chat.whatsapp.com/Er99xG5ODZYDwSZCHavWOb" type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
                                                 @endif
                                                 <a href="{{ route('tryout.index', $pembelian->paket_id) }}" type="button" class="btn btn-primary mt-4 mb-0">Mulai Tryout</a>
                                             @else

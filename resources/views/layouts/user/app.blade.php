@@ -121,9 +121,10 @@
                                         <strong>Email:</strong> <a style="color: inherit;" href="mailto:ukmbimbel@stis.ac.id">ukmbimbel@stis.ac.id</a><br>
                                     </p>
                                     <div class="social-links mt-3">
+                                        <a href="https://www.whatsapp.com/channel/0029Vb6tAJ97IUYPkGCzF43g" target="_blank" class="twitter"><i class="bx bxl-whatsapp"></i></a>
                                         <a href="https://twitter.com/UKMBimbelSTIS" target="_blank" class="twitter"><i class="bx bxl-twitter"></i></a>
                                         <a href="https://www.facebook.com/BimbelSTIS/" target="_blank" class="facebook"><i class="bx bxl-facebook"></i></a>
-                                        <a href="https://www.instagram.com/ukmbimbelstis/" target="_blank" class="instagram"><i class="bx bxl-instagram"></i></a>
+                                        <a href="https://www.instagram.com/bocah_kedinasan/" target="_blank" class="instagram"><i class="bx bxl-instagram"></i></a>
                                         <a href="https://www.youtube.com/@BimbelStis" target="_blank" class="youtube"><i class="bx bxl-youtube"></i></a>
                                     </div>
                                 </div>
@@ -136,7 +137,7 @@
 
         <div class="container">
             <div class="copyright">
-                Copyright &copy; UKM Bimbel 2024
+                Copyright &copy; Bocah Kedinasan by UKM Bimbel 2025
             </div>
         </div>
     </footer><!-- End Footer -->
