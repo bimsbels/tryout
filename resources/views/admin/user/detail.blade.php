@@ -51,6 +51,11 @@
                             <td class="text" id="asalSekolah"></td>
                         </tr>
                         <tr>
+                            <td style="width: 25%">Prodi</td>
+                            <td style="width: 3%">:</td>
+                            <td class="text" id="prodi"></td>
+                        </tr>
+                        <tr>
                             <td style="width: 25%">Penempatan</td>
                             <td style="width: 3%">:</td>
                             <td class="text" id="penempatan"></td>

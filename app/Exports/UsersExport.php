@@ -2,8 +2,10 @@
 
 namespace App\Exports;
 
+use App\Models\Prodi;
 use App\Models\User;
 use App\Models\Wilayah;
+use App\Models\Formasi;
 use Illuminate\Support\Facades\Http;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -25,6 +27,16 @@ class UsersExport implements FromQuery, WithMapping, WithHeadings
         return Wilayah::find($id);
     }
 
+    function getProdi($id)
+    {
+        return Prodi::find($id);
+    }
+
+    function getFormasi($id)
+    {
+        return Formasi::find($id);
+    }
+
     public function map($user): array
     {
         return [
@@ -36,8 +48,8 @@ class UsersExport implements FromQuery, WithMapping, WithHeadings
             isset($user->usersDetail->kabupaten) ? $this->getWilayahName($user->usersDetail->kabupaten)->nama : '',
             isset($user->usersDetail->kecamatan) ? $this->getWilayahName($user->usersDetail->kecamatan)->nama : '',
             $user->usersDetail->asal_sekolah ?? '',
-            isset($user->usersDetail->prodi) ? ($user->usersDetail->prodi == 1 ? 'DIII - Statistika' : ($user->usersDetail->prodi == 2 ? 'DIV - Statistika' : 'DIV - Komputasi Statistik')) : '',
-            isset($user->usersDetail->penempatan) ? $this->getWilayahName($user->usersDetail->penempatan)->nama : '',
+            isset($user->usersDetail->prodi) ? $this->getProdi($user->usersDetail->prodi)->nama : '',
+            isset($user->usersDetail->penempatan) ? $this->getFormasi($user->usersDetail->penempatan)->nama : '',
             $user->usersDetail->instagram ?? '',
             $user->profile_photo_url,
             $user->created_at,

@@ -259,6 +259,22 @@
             });
         }
 
+        async function getProdi(id) {
+            return $.ajax({
+                url: '/api/prodi/' + id,
+                type: 'GET',
+                dataType: 'json'
+            });
+        }
+
+        async function getFormasi(id) {
+            return $.ajax({
+                url: '/api/formasi/' + id,
+                type: 'GET',
+                dataType: 'json'
+            });
+        }
+
         // function getProvinces() {
         //     return $.ajax({
         //         url: '/api/provinces',
@@ -303,9 +319,17 @@
                             console.log(error);
                         }
 
+                        let prodi = "";
+                        try {
+                            const result = await getProdi(response.users_detail.prodi);
+                            prodi = result.nama;
+                        } catch (error) {
+                            console.log(error);
+                        }
+
                         let penempatan = "";
                         try {
-                            const result = await getProvince(response.users_detail.penempatan);
+                            const result = await getFormasi(response.users_detail.penempatan);
                             penempatan = result.nama;
                         } catch (error) {
                             console.log(error);
@@ -313,6 +337,7 @@
 
                         $('#modal-detail [id=alamat]').text(alamat);
                         $('#modal-detail [id=asalSekolah]').text(response.users_detail.asal_sekolah);
+                        $('#modal-detail [id=prodi]').text(prodi);
                         $('#modal-detail [id=penempatan]').text(penempatan);
                         $('#modal-detail [id=instagram]').text(response.users_detail.instagram);
                         $('#modal-detail [id=sumber]').text(response.users_detail.sumber_informasi);
