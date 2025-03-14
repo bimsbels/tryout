@@ -328,9 +328,15 @@
                                 // If there's only one result and it's "00", auto-select it
                                 if (filteredData.length === 1 && filteredData[0].kode.toString() === '00') {
                                     setTimeout(function () {
-                                        $('#formasi').val(filteredData[0].kode.toString()).trigger('change');
+                                        $('#formasi').val('00').trigger('change');
                                     }, 100);
                                 }
+                            }
+                            // If prodi code is 1, exclude formasi with code "00"
+                            else if (prodiCode === '1') {
+                                filteredData = data.filter(function (item) {
+                                    return item.kode.toString() !== '00';
+                                });
                             }
 
                             return {
