@@ -156,7 +156,7 @@
                                                        type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
                                                 @elseif($pembelian->paket_id == '0df8c9b0-d352-448b-9611-abadffc4f46d')
                                                     <a target="_blank"
-                                                       href="https://chat.whatsapp.com/GQefjygQnl82v9OlXwpPbL"
+                                                       href="https://chat.whatsapp.com/KjZhZ5b4wlLBNCAKadLJpF"
                                                        type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
                                                 @else
                                                     <a target="_blank"

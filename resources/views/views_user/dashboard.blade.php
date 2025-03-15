@@ -184,7 +184,7 @@
                                                                target="_blank" type="button"
                                                                style="width: 12rem; border: 2px solid; border-color: black"
                                                                class="btn-buy mb-2">Modul BIUS</a>
-                                                            <a href="https://chat.whatsapp.com/GQefjygQnl82v9OlXwpPbL"
+                                                            <a href="https://chat.whatsapp.com/KjZhZ5b4wlLBNCAKadLJpF"
                                                                target="_blank" type="button"
                                                                style="width: 10rem; border: 2px solid; border-color: black"
                                                                class="btn-buy mb-2">Grup WA</a>
