@@ -34,8 +34,9 @@ class BiusController extends Controller
                 return '
                     <select name="kelompok[]" onChange="storeKelompok(`'. $pembelian->user->id .'`)" id="kel-'. $pembelian->user->id .'" class="form-control input-kelompok">
                         <option value="">-- Pilih Nama Kelompok--</option>
-                        <option value="Kolmogorov" '. ($pembelian->user->usersDetail->nama_kelompok == "Kolmogorov" ? "selected" : "") .'>Kolmogorov</option>
-                        <option value="Smirnov" '. ($pembelian->user->usersDetail->nama_kelompok == "Smirnov" ? "selected" : "") .'>Smirnov</option>
+                        <option value="Poisson" '. ($pembelian->user->usersDetail->nama_kelompok == "Poisson" ? "selected" : "") .'>Poisson</option>
+                        <option value="Bernoulli" '. ($pembelian->user->usersDetail->nama_kelompok == "Bernoulli" ? "selected" : "") .'>Bernoulli</option>
+                        <option value="Binomial" '. ($pembelian->user->usersDetail->nama_kelompok == "Binomial" ? "selected" : "") .'>Binomial</option>
                     </select>';
             })
             ->rawColumns(['kelompok'])
