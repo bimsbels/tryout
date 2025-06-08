@@ -188,7 +188,7 @@
                                                                target="_blank" type="button"
                                                                style="width: 10rem; border: 2px solid; border-color: black"
                                                                class="btn-buy mb-2">Grup WA</a>
-                                                        @elseif($paket->pembelian[0]->paket_id == 'd5f57505-fb5a-4f59-a301-3722ef581844')
+                                                        @elseif(in_array($paketId, ['d5f57505-fb5a-4f59-a301-3722ef581844', 'f3a1cc46-c9b1-4ff6-a441-9e710ee8eb2f']))
                                                             <a href="https://chat.whatsapp.com/IavEtnpTOwZIETqkHGJlwp"
                                                                target="_blank" type="button"
                                                                style="width: 10rem; border: 2px solid; border-color: black"
