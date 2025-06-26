@@ -150,9 +150,9 @@
                                                     </button>
                                                 </form>
                                             @elseif($pembelian->status == 'Sukses')
-                                                @if ($pembelian->paket_id == 'd5f57505-fb5a-4f59-a301-3722ef581844')
+                                                @if ($pembelian->paket_id == 'd5f57505-fb5a-4f59-a301-3722ef581844' || $pembelian->paket_id == 'f3a1cc46-c9b1-4ff6-a441-9e710ee8eb2f')
                                                     <a target="_blank"
-                                                       href="https://chat.whatsapp.com/IavEtnpTOwZIETqkHGJlwp"
+                                                       href="https://chat.whatsapp.com/FcplHPqtogHCDxZOXpPnmd"
                                                        type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
                                                 @elseif($pembelian->paket_id == '0df8c9b0-d352-448b-9611-abadffc4f46d')
                                                     <a target="_blank"
